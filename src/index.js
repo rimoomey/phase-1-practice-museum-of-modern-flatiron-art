@@ -3,20 +3,18 @@ function displayExhibit() {
     .then((response) => response.json())
     .then((data) => {
       exhibit0 = data[0];
+      console.log(exhibit0)
       const title = document.getElementById("exhibit-title");
       title.textContent = exhibit0.title;
 
       const image = document.getElementById("exhibit-image");
       image.src = exhibit0.image;
 
-      const ticketsBoughtContainer = document.querySelector("#tickets-bought");
+      const description = document.getElementById("exhibit-description");
+      description.textContent = exhibit0.description;
 
-      fetch("http://localhost:3000/current-exhibits/")
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-          ticketsBoughtContainer.textContent = `${data[0]["tickets_bought"]} Tickets Bought`;
-        });
+      const ticketsBoughtContainer = document.querySelector("#tickets-bought");
+      ticketsBoughtContainer.textContent = `${exhibit0["tickets_bought"]} Tickets Bought`;
     });
 }
 
