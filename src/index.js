@@ -4,10 +4,19 @@ function displayExhibit() {
     .then((data) => {
       exhibit0 = data[0];
       const title = document.getElementById("exhibit-title");
-      title.textContent = data[0].title;
+      title.textContent = exhibit0.title;
 
       const image = document.getElementById("exhibit-image");
-      image.src = data[0].image;
+      image.src = exhibit0.image;
+
+      const ticketsBoughtContainer = document.querySelector("#tickets-bought");
+
+      fetch("http://localhost:3000/current-exhibits/")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          ticketsBoughtContainer.textContent = `${data[0]["tickets_bought"]} Tickets Bought`;
+        });
     });
 }
 
@@ -17,37 +26,38 @@ function allowComments() {
   const commentZone = document.querySelector(".comments-container");
 
   //adding what's in the database
-  fetch('http://localhost:3000/current-exhibits/1')
-  .then(response => response.json())
-  .then(data => data.comments.forEach(comment => {
-    comments.push(comment);
+  fetch("http://localhost:3000/current-exhibits/1")
+    .then((response) => response.json())
+    .then((data) =>
+      data.comments.forEach((comment) => {
+        comments.push(comment);
 
-    const newComment = document.createElement("p");
-    newComment.textContent = comment;
-    commentZone.appendChild(newComment);
-  }))
+        const newComment = document.createElement("p");
+        newComment.textContent = comment;
+        commentZone.appendChild(newComment);
+      })
+    );
 
   //adding new comment to database and displaying
   commentForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const newCommentText = commentForm.querySelector('input').value;
+    const newCommentText = commentForm.querySelector("input").value;
     comments.push(newCommentText);
 
-    fetch('http://localhost:3000/current-exhibits/1',
-    {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({comments: comments})
+    fetch("http://localhost:3000/current-exhibits/1", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ comments: comments }),
     })
-    .then(res => res.json())
-    .then(data => {
-        const newComment = document.createElement('p');
+      .then((res) => res.json())
+      .then((data) => {
+        const newComment = document.createElement("p");
         newComment.textContent = newCommentText;
         commentZone.appendChild(newComment);
-    })
+      });
   });
 }
 
@@ -60,18 +70,16 @@ function allowTicketPurchasing() {
     fetch("http://localhost:3000/current-exhibits/1", {
       method: "PATCH",
       body: JSON.stringify({
-        "tickets_bought": ++ticketCount
+        tickets_bought: ++ticketCount,
       }),
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-    .then((response) => response.json())
-    .then((data) => {
-        ticketsBoughtContainer.textContent = `${
-            ticketCount
-          } Tickets Bought`;
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        ticketsBoughtContainer.textContent = `${ticketCount} Tickets Bought`;
+      });
   });
 }
 
